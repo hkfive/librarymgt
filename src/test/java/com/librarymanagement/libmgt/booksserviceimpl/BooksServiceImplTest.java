@@ -1,4 +1,4 @@
-package com.librarymanagement.libmgt.booksservice;
+package com.librarymanagement.libmgt.booksserviceimpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
