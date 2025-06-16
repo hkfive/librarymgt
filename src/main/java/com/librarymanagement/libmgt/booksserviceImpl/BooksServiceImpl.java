@@ -16,6 +16,8 @@ import com.librarymanagement.libmgt.booksdto.BooksResponseDTO;
 import com.librarymanagement.libmgt.booksrepository.BooksRepository;
 import com.librarymanagement.libmgt.booksservice.BooksService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class BooksServiceImpl implements BooksService {
 	
@@ -53,4 +55,28 @@ public class BooksServiceImpl implements BooksService {
 
 	     
 	}
+
+	 @Override
+	    public BooksResponseDTO getBookById(Long id) {
+	        Books book = booksRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
+	        return modelMapper.map(book, BooksResponseDTO.class);
+	    }
+
+	    @Override
+	    public BooksResponseDTO updateBook(Long id, BooksDTO booksDTO) {
+	        Books existing = booksRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
+	        existing.setTopic(booksDTO.getTopic());
+	        existing.setAuthor(booksDTO.getAuthor());
+	        existing.setIsbn(booksDTO.getIsbn());
+	        existing.setPublishedDate(booksDTO.getPublishedDate());
+	        existing.setStatus(booksDTO.getStatus());
+	        return modelMapper.map(booksRepository.save(existing), BooksResponseDTO.class);
+	    }
+
+	    @Override
+	    public void deleteBook(Long id) {
+	        Books book = booksRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
+	        booksRepository.delete(book);
+	    }
+
 }

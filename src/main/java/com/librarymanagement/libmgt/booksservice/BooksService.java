@@ -13,5 +13,7 @@ import com.librarymanagement.libmgt.booksdto.BooksResponseDTO;
 public interface BooksService {
 	 BooksResponseDTO createBook(BooksDTO dto);
 	 List<BooksResponseDTO> getAllBooks(Optional<String> author, Optional<Status> status);
-	 
+	 BooksResponseDTO getBookById(Long id);
+	 BooksResponseDTO updateBook(Long id, BooksDTO booksDTO);
+	 void deleteBook(Long id);
 }

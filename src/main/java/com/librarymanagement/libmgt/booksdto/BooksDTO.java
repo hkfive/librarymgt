@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.librarymanagement.libmgt.books.Books;
 import com.librarymanagement.libmgt.books.Status;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,8 +19,10 @@ import lombok.Setter;
 @Builder
 public class BooksDTO {
 	private Long id;
+	@NotBlank
     private String topic;
     private String author;
+    @NotBlank
     private String isbn;
     private LocalDate publishedDate;
     private Status status;
