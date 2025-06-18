@@ -21,6 +21,7 @@ public class BooksDTO {
 	private Long id;
 	@NotBlank
     private String topic;
+	@NotBlank
     private String author;
     @NotBlank
     private String isbn;

@@ -1,5 +1,6 @@
 package com.librarymanagement.libmgt.booksserviceImpl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ public class BooksServiceImpl implements BooksService {
 	
 	@Override
 	public BooksResponseDTO createBook(BooksDTO booksDTO) {
-		if (booksRepository.existsByIsbn(booksDTO.getIsbn())) {
+		if (booksRepository.findByIsbn(booksDTO.getIsbn())) {
             throw new IllegalArgumentException("ISBN already exists");
         }
 
@@ -77,6 +78,15 @@ public class BooksServiceImpl implements BooksService {
 	    public void deleteBook(Long id) {
 	        Books book = booksRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
 	        booksRepository.delete(book);
+	    }
+	    
+	    @Override
+	    public List<BooksResponseDTO> getBooksAfterDate(LocalDate date) {
+	    	List<Books> books = booksRepository.findAll();
+	    	return books.stream()
+	    		    .filter(bk -> bk.getPublishedDate() != null && bk.getPublishedDate().isAfter(date))
+	    		    .map(bk -> modelMapper.map(bk, BooksResponseDTO.class))
+	    		    .toList();
 	    }
 
 }

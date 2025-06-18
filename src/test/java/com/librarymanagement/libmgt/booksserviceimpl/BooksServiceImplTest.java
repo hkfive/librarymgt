@@ -1,6 +1,9 @@
 package com.librarymanagement.libmgt.booksserviceimpl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +56,7 @@ public class BooksServiceImplTest {
         expectedResponse.setIsbn("1234567890");
         expectedResponse.setTopic("Mystery");
 
-        when(repository.existsByIsbn("1234567890")).thenReturn(false);
+        when(repository.findByIsbn("1234567890")).thenReturn(false);
         when(modelMapper.map(booksDTO, Books.class)).thenReturn(bookEntity);
         when(repository.save(bookEntity)).thenReturn(bookEntity);
         when(modelMapper.map(bookEntity, BooksResponseDTO.class)).thenReturn(expectedResponse);
@@ -76,7 +79,7 @@ public class BooksServiceImplTest {
             .status(Status.AVAILABLE)
             .build();
 
-        when(repository.existsByIsbn("Isbn_Duplicate")).thenReturn(true);
+        when(repository.findByIsbn("Isbn_Duplicate")).thenReturn(true);
 
         IllegalArgumentException exception = org.junit.jupiter.api.Assertions.assertThrows(
             IllegalArgumentException.class,
@@ -84,7 +87,7 @@ public class BooksServiceImplTest {
         );
 
         assertEquals("ISBN already exists", exception.getMessage());
-        verify(repository).existsByIsbn("Isbn_Duplicate");
+        verify(repository).findByIsbn("Isbn_Duplicate");
         verify(repository, org.mockito.Mockito.never()).save(org.mockito.Mockito.any());
     }
     
@@ -220,6 +223,37 @@ public class BooksServiceImplTest {
         assertEquals(1, result.size());
         assertEquals(Status.AVAILABLE, result.get(0).getStatus());
         verify(repository).findAll();
+    }
+    
+    @Test
+    void testgetBooksAfterDate_ReturnsBooksAfterGivenDate() {
+
+        LocalDate cutoffDate = LocalDate.of(2022, 1, 1);
+
+        Books book1 = new Books(1L, "Title1", "Author1", "ISBN1", LocalDate.of(1992, 4, 10), Status.AVAILABLE);
+        Books book2 = new Books(2L, "Title2", "Author2", "ISBN2", LocalDate.of(2025, 06, 18), Status.BORROWED);
+        Books book3 = new Books(3L, "Title3", "Author3", "ISBN3", null, Status.AVAILABLE);
+
+        List<Books> allBooks = List.of(book1, book2, book3);
+        when(repository.findAll()).thenReturn(allBooks);
+
+        BooksResponseDTO dto1 = new BooksResponseDTO();
+        dto1.setId(book1.getId());
+        dto1.setTopic(book1.getTopic());
+        dto1.setAuthor(book1.getAuthor());
+        dto1.setIsbn(book1.getIsbn());
+        dto1.setPublishedDate(book1.getPublishedDate());
+        dto1.setStatus(book1.getStatus());
+
+        when(modelMapper.map(any(Books.class), eq(BooksResponseDTO.class)))
+        .thenReturn(dto1);
+
+        List<BooksResponseDTO> result = service.getBooksAfterDate(cutoffDate);
+
+        assertEquals(1, result.size());
+        assertEquals("Title1", result.get(0).getTopic());
+        verify(repository, times(1)).findAll();
+        verify(modelMapper, times(1)).map(any(Books.class), eq(BooksResponseDTO.class));;
     }
 }
 

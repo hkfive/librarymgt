@@ -1,5 +1,6 @@
 package com.librarymanagement.libmgt.booksservice;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,4 +17,5 @@ public interface BooksService {
 	 BooksResponseDTO getBookById(Long id);
 	 BooksResponseDTO updateBook(Long id, BooksDTO booksDTO);
 	 void deleteBook(Long id);
+	 public List<BooksResponseDTO> getBooksAfterDate(LocalDate date);
 }

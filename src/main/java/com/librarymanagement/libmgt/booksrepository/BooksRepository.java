@@ -7,8 +7,6 @@ import com.librarymanagement.libmgt.books.Books;
 
 public interface BooksRepository extends JpaRepository<Books, Long>{
 
-	boolean existsByIsbn(String isbn);
-
-	Books save(Books books);
+	boolean findByIsbn(String isbn);
 
 }

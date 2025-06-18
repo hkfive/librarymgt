@@ -1,9 +1,11 @@
 package com.librarymanagement.libmgt.bookscontroller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -57,4 +59,10 @@ public class BooksController {
         booksService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/getBooksAfterDate")
+    public List<BooksResponseDTO> getBooksAfterDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return booksService.getBooksAfterDate(date);
+    }
+    
 }
